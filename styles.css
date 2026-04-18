@@ -725,11 +725,97 @@ body {
 .prod-btn:hover {
   border-color: #7affaf;
 }
+.task-counter-box {
+  background: #1a1a1a;
+  border: 1px solid #7affaf;
+  padding: 0.6rem;
+  text-align: center;
+  margin: 0.8rem 0;
+  border-radius: 4px;
+}
+
+.task-counter-label {
+  font-size: 0.6rem;
+  color: #555;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.task-counter {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 2rem;
+  color: #7affaf;
+  display: block;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(122, 255, 175, 0.3);
+}
+
+.prod-log-header {
+  font-size: 0.6rem;
+  color: #7affaf;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.8rem;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #1f1f1f;
+}
+
 .prod-log {
   font-size: 0.6rem;
-  color: #333;
+  color: #7affaf;
   margin-top: 0.5rem;
   line-height: 1.8;
+  max-height: 120px;
+  overflow-y: auto;
+  background: #0f0f0f;
+  padding: 0.6rem;
+  border-left: 2px solid #ff3c00;
+}
+
+.task-item {
+  animation: slideIn 0.3s ease-out;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-time {
+  color: #ff3c00;
+  font-weight: bold;
+}
+
+.task-text {
+  color: #7affaf;
+  margin-left: 0.4rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+    text-shadow: 0 0 20px rgba(122, 255, 175, 0.6);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .footer-bar {

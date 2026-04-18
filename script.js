@@ -57,6 +57,140 @@ function showToast(msg) {
   }, 2800);
 }
 
+// ===== SOUND EFFECTS =====
+var audioContext = null;
+
+// CUSTOM AUDIO FILES - Add your own audio files here
+var loginAudioFile = "sounds/login.mp3"; // Change this to your login sound file
+var clickAudioFile = "sounds/click.mp3"; // Change this to your click sound file
+
+// Create audio elements for custom sounds
+var loginAudio = new Audio();
+var clickAudio = new Audio();
+
+// Set the source files
+loginAudio.src = loginAudioFile;
+clickAudio.src = clickAudioFile;
+
+// Optional: Set volume (0 to 1)
+loginAudio.volume = 0.7;
+clickAudio.volume = 0.5;
+
+function initAudioContext() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioContext;
+}
+
+// Fallback: Generate sound if custom audio fails
+function generateLoginSound() {
+  try {
+    var ctx = initAudioContext();
+    var now = ctx.currentTime;
+    var duration = 0.5;
+
+    // Create oscillator for login success sound (uplifting beep)
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    // Frequency sweep: 400 -> 800 Hz
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + duration);
+
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+    osc.start(now);
+    osc.stop(now + duration);
+
+    // Add a second higher tone for richer sound
+    var osc2 = ctx.createOscillator();
+    osc2.connect(gain);
+    osc2.frequency.setValueAtTime(600, now);
+    osc2.frequency.exponentialRampToValueAtTime(1000, now + duration);
+    osc2.start(now);
+    osc2.stop(now + duration);
+  } catch (e) {
+    console.log("Audio not supported");
+  }
+}
+
+// Fallback: Generate click sound if custom audio fails
+function generateClickSound() {
+  try {
+    var ctx = initAudioContext();
+    var now = ctx.currentTime;
+    var duration = 0.1;
+
+    // Create fun "boing" sound for button click
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    // Quick frequency sweep down: 600 -> 300 Hz (fun boing effect)
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(300, now + duration);
+
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+    osc.start(now);
+    osc.stop(now + duration);
+  } catch (e) {
+    console.log("Audio not supported");
+  }
+}
+
+function playLoginSound() {
+  try {
+    // Try to play custom audio file
+    if (loginAudio.src && loginAudio.src !== "") {
+      loginAudio.currentTime = 0;
+      var playPromise = loginAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(function () {
+          // If custom audio fails, use fallback
+          generateLoginSound();
+        });
+      }
+    } else {
+      // No custom file set, use fallback
+      generateLoginSound();
+    }
+  } catch (e) {
+    // Fallback to generated sound
+    generateLoginSound();
+  }
+}
+
+function playClickSound() {
+  try {
+    // Try to play custom audio file
+    if (clickAudio.src && clickAudio.src !== "") {
+      clickAudio.currentTime = 0;
+      var playPromise = clickAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(function () {
+          // If custom audio fails, use fallback
+          generateClickSound();
+        });
+      }
+    } else {
+      // No custom file set, use fallback
+      generateClickSound();
+    }
+  } catch (e) {
+    // Fallback to generated sound
+    generateClickSound();
+  }
+}
+
 // ===== LOGIN SYSTEM (COMPLETELY USELESS) =====
 var isLoggedIn = false;
 var currentUser = "";
@@ -124,6 +258,9 @@ function completeLogin() {
   document.getElementById("loggedInUser").textContent =
     "Logged in as: " + currentUser;
 
+  // Play login sound effect
+  playLoginSound();
+
   // Spawn confetti
   spawnConfetti();
 
@@ -181,6 +318,9 @@ var btnMessages = [
   "100+ clicks? bhai life mein goals hone chahiye.",
 ];
 function pressButton() {
+  // Play click sound effect
+  playClickSound();
+
   clicks++;
   document.getElementById("clickCounter").textContent =
     clicks + " baar daba chuke ho \u2022 kuch nahi hua";
@@ -570,13 +710,31 @@ function logTask() {
     hour: "2-digit",
     minute: "2-digit",
   });
-  log.innerHTML =
-    '<span style="color:#ff3c00">' +
+
+  // Create task item with animation
+  var taskDiv = document.createElement("div");
+  taskDiv.className = "task-item";
+  taskDiv.innerHTML =
+    '<span class="task-time">[' +
     time +
-    "</span> ✓ " +
+    ']</span> <span class="task-text">✓ ' +
     task +
-    "<br>" +
-    log.innerHTML;
+    "</span>";
+
+  // Add to top of list
+  if (log.firstChild) {
+    log.insertBefore(taskDiv, log.firstChild);
+  } else {
+    log.appendChild(taskDiv);
+  }
+
+  // Update counter
+  document.getElementById("taskCounter").textContent = prodTasks;
+  document.getElementById("taskCounter").style.animation = "none";
+  setTimeout(function () {
+    document.getElementById("taskCounter").style.animation = "pulse 0.5s ease";
+  }, 10);
+
   showToast("✓ Task #" + prodTasks + " logged. Bahut productive lag raha hai!");
   if (prodTasks === 5) {
     spawnConfetti();

@@ -54,7 +54,9 @@
     <!-- LOGOUT BUTTON (hidden until login) -->
     <div id="logoutBar" class="logout-bar" style="display: none">
       <span id="loggedInUser" class="logged-in-user">Logged in as: bhai</span>
-      <button class="logout-btn" onclick="logout()">&#x2717; Don't Click</button>
+      <button class="logout-btn" onclick="logout()">
+        &#x2717; Don't Click
+      </button>
     </div>
 
     <div class="header">
@@ -215,12 +217,17 @@
         </div>
         <div class="prod-display" id="prodTimer">00:00</div>
         <div class="prod-subtitle" id="prodStatus">kuch nahi ho raha abhi</div>
+        <div class="task-counter-box">
+          <span class="task-counter-label">Tasks Completed:</span>
+          <span class="task-counter" id="taskCounter">0</span>
+        </div>
         <button class="prod-btn" id="prodBtn" onclick="toggleProd()">
           &#x25B6; KAAM SHURU KARO
         </button>
         <button class="prod-btn" onclick="logTask()">
           &#x2713; EK KAAM COMPLETE KIYA (maybe)
         </button>
+        <div class="prod-log-header">COMPLETED TASKS:</div>
         <div class="prod-log" id="prodLog"></div>
       </div>
 
